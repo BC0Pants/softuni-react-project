@@ -45,7 +45,7 @@ userSchema.pre("validate", function (next) {
 
 userSchema.post("validate", async function () {
   this.role = UserRoles.User;
-  this.password = await bcrypt.hash(this.password, saltRounds);
+  this.password = await bcryptjs.hash(this.password, saltRounds);
 });
 
 userSchema.virtual("rePassword", {
