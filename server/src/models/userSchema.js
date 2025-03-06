@@ -1,5 +1,8 @@
 import { Schema, model } from "mongoose";
 import bcryptjs from "bcryptjs";
+import validator from "validator";
+
+const saltRounds = 10;
 
 const userSchema = new Schema({
   username: {
@@ -26,6 +29,7 @@ const userSchema = new Schema({
   role: {
     type: String,
     enum: ["User", "Admin"],
+    default: "User",
   },
 });
 
@@ -44,7 +48,6 @@ userSchema.pre("validate", function (next) {
 });
 
 userSchema.post("validate", async function () {
-  this.role = UserRoles.User;
   this.password = await bcryptjs.hash(this.password, saltRounds);
 });
 
@@ -56,5 +59,7 @@ userSchema.virtual("rePassword", {
     this._rePassword = value;
   },
 });
+
+const User = model("User", userSchema);
 
 export default User;
