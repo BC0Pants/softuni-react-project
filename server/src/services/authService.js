@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import User from "../models/userSchema.js";
 
 dotenv.config();
-const secret = process.env.SECRET;
+const secret = process.env.JWT_SECRET;
 
 export default {
   register(userData) {
@@ -12,22 +12,19 @@ export default {
   },
   async login(email, password) {
     const user = await User.findOne({ email });
-
     if (!user) {
       throw new Error("Invalid email or password");
     }
-
     const isValid = await bcryptjs.compare(password, user.password);
     if (!isValid) {
       throw new Error("Invalid email or password");
     }
-
     const payload = {
       id: user.id,
       email: user.email,
     };
+    console.log("JWT Secret:", secret);
     const token = jwt.sign(payload, secret, { expiresIn: "2h" });
-
     return token;
   },
 };
