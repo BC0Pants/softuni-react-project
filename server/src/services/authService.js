@@ -23,7 +23,6 @@ export default {
       id: user.id,
       email: user.email,
     };
-    console.log("JWT Secret:", secret);
     const token = jwt.sign(payload, secret, { expiresIn: "2h" });
     return token;
   },
