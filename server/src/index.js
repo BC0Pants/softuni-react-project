@@ -6,7 +6,7 @@ import routes from "./routes/routes.js";
 
 dotenv.config();
 const port = process.env.PORT || 8080;
-const db = process.env.DBURI;
+const db = process.env.DB_URI;
 
 const connectDB = async () => {
   try {
