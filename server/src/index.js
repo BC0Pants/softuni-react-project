@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import routes from "./routes/routes.js";
 
 dotenv.config();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT;
 const db = process.env.DB_URI;
 
 const connectDB = async () => {

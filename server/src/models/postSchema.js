@@ -1,6 +1,10 @@
 import { Schema, model } from "mongoose";
 
 const postSchema = new Schema({
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   title: {
     type: String,
     required: true,
