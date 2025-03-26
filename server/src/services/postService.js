@@ -6,8 +6,7 @@ import Post from "../models/postSchema.js";
 dotenv.config();
 const secret = process.env.JWT_SECRET;
 
-function extractIdFromToken(json) {
-  const token = json.token;
+function extractIdFromToken(token) {
   if (!token) {
     throw new Error("Token is missing");
   }
@@ -16,14 +15,19 @@ function extractIdFromToken(json) {
     return decoded?.id;
   } catch (error) {
     console.error("Error decoding JWT:", error.message);
-    return null;
+    throw new Error("Invalid authentication token");
   }
 }
 
 export default {
-  create(postData) {
+  create(postData, token) {
+    const userId = extractIdFromToken(token);
+    if (!userId) {
+      throw new Error("User authentication failed");
+    }
+
     const postInfo = {
-      author: extractIdFromToken(postData),
+      author: userId,
       title: postData.title,
       body: postData.body,
       picture: postData.picture,
