@@ -36,4 +36,16 @@ export default {
 
     return Post.create(postInfo);
   },
+  
+  async getAll() {
+    return Post.find().populate('author').populate('flags').sort({ createdAt: -1 });
+  },
+  
+  async getById(id) {
+    return Post.findById(id).populate('author').populate('flags');
+  },
+
+  async getByFlagId(flagId) {
+    return Post.find({ flags: flagId }).populate('author').populate('flags').sort({ createdAt: -1 });
+  }
 };
