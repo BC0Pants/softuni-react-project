@@ -7,10 +7,10 @@ authController.post("/register", async (req, res) => {
   const userData = req.body;
   try {
     await authService.register(userData);
+    res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    console.log(error.message);
+    res.status(400).json({ message: error.message });
   }
-  res.end();
 });
 
 authController.post("/login", async (req, res) => {
@@ -18,12 +18,16 @@ authController.post("/login", async (req, res) => {
 
   try {
     const token = await authService.login(email, password);
-    res.cookie("auth", token, { httpOnly: true });
+    res.cookie("auth", token, { 
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 2 * 60 * 60 * 1000 // 2 hours
+    });
+    res.status(200).json({ message: "Login successful" });
   } catch (error) {
-    console.log(error.message);
-    res.status(401);
+    res.status(401).json({ message: error.message });
   }
-  res.end();
 });
 
 export default authController;
