@@ -31,7 +31,7 @@ export default {
       title: postData.title,
       body: postData.body,
       picture: postData.picture,
-      flags: postData.flagsId,
+      flags: [postData.flagsId],
     };
 
     return Post.create(postInfo);

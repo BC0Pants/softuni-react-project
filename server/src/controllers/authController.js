@@ -24,7 +24,7 @@ authController.post("/login", async (req, res) => {
       sameSite: 'lax',
       maxAge: 2 * 60 * 60 * 1000 // 2 hours
     });
-    res.status(200).json({ message: "Login successful" });
+    res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     res.status(401).json({ message: error.message });
   }

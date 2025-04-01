@@ -99,7 +99,16 @@ const CreatePost = () => {
     }
 
     try {
+      const token = localStorage.getItem('token'); 
+      if (!token) {
+        setError('Please log in to create a post');
+        return;
+      }
+
       const response = await axios.post('http://localhost:8080/posts/create', formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         withCredentials: true
       });
 

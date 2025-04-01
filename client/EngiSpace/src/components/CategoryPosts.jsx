@@ -53,7 +53,7 @@ const CategoryPosts = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl text-[#89b4fa] font-bold">{category?.name || 'Category'}</h1>
           <Link
-            to="/category/:flagId/posts/create-post"
+            to={`/category/${flagId}/posts/create-post`}
             className="bg-[#89b4fa] text-[#1e1e2e] px-6 py-2 rounded-md hover:bg-[#b4befe] transition-colors duration-300"
           >
             Create Post

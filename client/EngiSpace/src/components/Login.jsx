@@ -31,8 +31,8 @@ const Login = () => {
       });
 
       if (response.status === 200) {
-
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('token', response.data.token);
         navigate('/');
       }
     } catch (err) {
