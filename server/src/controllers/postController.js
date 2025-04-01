@@ -1,7 +1,14 @@
 import { Router } from "express";
 import postService from "../services/postService.js";
+import imgur from 'imgur';
 
 const postController = Router();
+
+// Configure Imgur client
+imgur.API_URL = "https://api.imgur.com/3/";
+imgur.credentials = {
+  client_id: process.env.IMGUR_CLIENT_ID
+};
 
 postController.post("/create", async (req, res) => {
   const postData = req.body;
@@ -49,6 +56,17 @@ postController.get("/:id", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Error fetching post' });
+  }
+});
+
+postController.post("/upload-image", async (req, res) => {
+  try {
+    const imageData = req.body.image;
+    const response = await imgur.uploadBase64(imageData);
+    res.status(200).json({ url: response.data.link });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: 'Failed to upload image' });
   }
 });
 
