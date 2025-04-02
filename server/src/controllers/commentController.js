@@ -18,6 +18,21 @@ commentController.post("/create/:postId", async (req, res) => {
   }
 });
 
+commentController.get("/all", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const comments = await commentService.getAll();
+    res.status(200).json(comments);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error fetching comments' });
+  }
+});
+
 commentController.get("/by-post/:postId", async (req, res) => {
   try {
     const comments = await commentService.getByPostId(req.params.postId);

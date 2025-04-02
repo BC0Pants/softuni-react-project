@@ -26,6 +26,12 @@ const Navbar = () => {
             </Link>
             {isAuthenticated ? (
               <>
+                <Link
+                  to="/profile"
+                  className="text-[#a6adc8] hover:text-[#89b4fa] transition-colors duration-300"
+                >
+                  Profile
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="text-[#a6adc8] hover:text-[#89b4fa] transition-colors duration-300"

@@ -28,6 +28,11 @@ postController.post("/create", async (req, res) => {
 
 postController.get("/all", async (req, res) => {
   try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
     const posts = await postService.getAll();
     res.status(200).json(posts);
   } catch (error) {
@@ -66,8 +71,8 @@ postController.post("/:id/like", async (req, res) => {
       return res.status(401).json({ message: 'Authentication required' });
     }
 
-    const post = await postService.toggleLike(req.params.id, token);
-    res.status(200).json(post);
+    await postService.toggleLike(req.params.id, token);
+    res.status(200).json({ message: 'Like toggled successfully' });
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error.message });
@@ -92,10 +97,7 @@ postController.delete("/:id", async (req, res) => {
       return res.status(401).json({ message: 'Authentication required' });
     }
 
-    const success = await postService.delete(req.params.id, token);
-    if (!success) {
-      return res.status(404).json({ message: 'Post not found or unauthorized' });
-    }
+    await postService.delete(req.params.id, token);
     res.status(200).json({ message: 'Post deleted successfully' });
   } catch (error) {
     console.log(error);
@@ -110,12 +112,8 @@ postController.put("/:id", async (req, res) => {
       return res.status(401).json({ message: 'Authentication required' });
     }
 
-    const postData = req.body;
-    const updatedPost = await postService.update(req.params.id, postData, token);
-    if (!updatedPost) {
-      return res.status(404).json({ message: 'Post not found or unauthorized' });
-    }
-    res.status(200).json(updatedPost);
+    await postService.update(req.params.id, req.body, token);
+    res.status(200).json({ message: 'Post updated successfully' });
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error.message });

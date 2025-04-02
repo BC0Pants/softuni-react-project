@@ -7,6 +7,7 @@ import Register from './components/Register';
 import CategoryPosts from './components/CategoryPosts';
 import CreatePost from './components/CreatePost';
 import PostPage from './components/PostPage';
+import Profile from './components/Profile';
 
 function App() {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
@@ -33,6 +34,10 @@ function App() {
         <Route 
           path="/category/:flagId/posts/:postId" 
           element={<PostPage />} 
+        />
+        <Route 
+          path="/profile" 
+          element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} 
         />
       </Routes>
     </Router>

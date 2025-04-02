@@ -28,21 +28,44 @@ export default {
 
     const comment = await Comment.create({
       author: userId,
-      content
+      content,
+      post: postId
     });
 
     await Post.findByIdAndUpdate(postId, {
       $push: { comments: comment._id }
     });
 
-    return Comment.findById(comment._id).populate('author', 'username');
+    return Comment.findById(comment._id)
+      .populate('author', 'username')
+      .populate({
+        path: 'post',
+        select: 'title flags',
+        populate: {
+          path: 'flags',
+          select: '_id'
+        }
+      });
+  },
+
+  async getAll() {
+    return Comment.find()
+      .populate('author', 'username')
+      .populate({
+        path: 'post',
+        select: 'title flags',
+        populate: {
+          path: 'flags',
+          select: '_id'
+        }
+      })
+      .sort({ createdAt: -1 });
   },
 
   async getByPostId(postId) {
-    const comments = await Comment.find({ _id: { $in: await Post.findById(postId).select('comments') } })
+    return Comment.find({ post: postId })
       .populate('author', 'username')
       .sort({ createdAt: -1 });
-    return comments;
   },
 
   async delete(commentId, token) {
@@ -60,12 +83,18 @@ export default {
       throw new Error("You can only delete your own comments");
     }
 
-    await Post.updateOne(
-      { comments: commentId },
-      { $pull: { comments: commentId } }
-    );
+    // Update the post to remove the comment reference if the post exists
+    try {
+      await Post.findByIdAndUpdate(comment.post, {
+        $pull: { comments: commentId }
+      });
+    } catch (error) {
+      console.error('Error updating post:', error);
+      // Continue with comment deletion even if post update fails
+    }
 
-    return Comment.findByIdAndDelete(commentId);
+    // Delete the comment
+    await Comment.findByIdAndDelete(commentId);
   },
 
   async edit(commentId, content, token) {
@@ -86,6 +115,15 @@ export default {
     comment.content = content;
     await comment.save();
 
-    return Comment.findById(commentId).populate('author', 'username');
+    return Comment.findById(commentId)
+      .populate('author', 'username')
+      .populate({
+        path: 'post',
+        select: 'title flags',
+        populate: {
+          path: 'flags',
+          select: '_id'
+        }
+      });
   }
 }; 

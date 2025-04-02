@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 
 import Post from "../models/postSchema.js";
+import Comment from "../models/commentSchema.js";
 
 dotenv.config();
 const secret = process.env.JWT_SECRET;
@@ -108,6 +109,10 @@ export default {
       throw new Error("Unauthorized to delete this post");
     }
 
+    // Delete all comments associated with this post
+    await Comment.deleteMany({ post: postId });
+
+    // Delete the post
     await Post.findByIdAndDelete(postId);
     return true;
   },
