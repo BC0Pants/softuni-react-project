@@ -10,6 +10,9 @@ const PostPage = () => {
   const [commentContent, setCommentContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [comments, setComments] = useState([]);
+  const [editingComment, setEditingComment] = useState(null);
+  const [editContent, setEditContent] = useState('');
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -27,6 +30,19 @@ const PostPage = () => {
 
     fetchPost();
   }, [postId]);
+
+  useEffect(() => {
+    // Get current user ID from token
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setCurrentUserId(payload.id);
+      } catch (err) {
+        console.error('Error parsing token:', err);
+      }
+    }
+  }, []);
 
   const handleLike = async () => {
     try {
@@ -103,6 +119,44 @@ const PostPage = () => {
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete comment');
     }
+  };
+
+  const handleEditComment = async (commentId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Please log in to edit comments');
+        return;
+      }
+
+      const response = await axios.put(
+        `http://localhost:8080/comments/${commentId}`,
+        { content: editContent },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      setComments(prev => prev.map(comment => 
+        comment._id === commentId ? response.data : comment
+      ));
+      setEditingComment(null);
+      setEditContent('');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to edit comment');
+    }
+  };
+
+  const startEditing = (comment) => {
+    setEditingComment(comment._id);
+    setEditContent(comment.content);
+  };
+
+  const cancelEditing = () => {
+    setEditingComment(null);
+    setEditContent('');
   };
 
   if (isLoading) {
@@ -231,28 +285,71 @@ const PostPage = () => {
                             </span>
                           </div>
                         </div>
-                        {comment.author._id === localStorage.getItem('userId') && (
-                          <button
-                            onClick={() => handleDeleteComment(comment._id)}
-                            className="text-red-500 hover:text-red-400 transition-colors duration-300"
-                            title="Delete comment"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
+                        {comment.author._id === currentUserId && (
+                          <div className="flex space-x-2">
+                            {editingComment === comment._id ? (
+                              <>
+                                <button
+                                  onClick={() => handleEditComment(comment._id)}
+                                  className="text-[#89b4fa] hover:text-[#b4befe] transition-colors duration-300"
+                                  title="Save edit"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                </button>
+                                <button
+                                  onClick={cancelEditing}
+                                  className="text-[#a6adc8] hover:text-[#cdd6f4] transition-colors duration-300"
+                                  title="Cancel edit"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                  </svg>
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                onClick={() => startEditing(comment)}
+                                className="text-[#89b4fa] hover:text-[#b4befe] transition-colors duration-300"
+                                title="Edit comment"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                </svg>
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteComment(comment._id)}
+                              className="text-red-500 hover:text-red-400 transition-colors duration-300"
+                              title="Delete comment"
                             >
-                              <path
-                                fillRule="evenodd"
-                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </button>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </button>
+                          </div>
                         )}
                       </div>
-                      <p className="text-[#cdd6f4] mt-2">{comment.content}</p>
+                      {editingComment === comment._id ? (
+                        <textarea
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          className="w-full px-4 py-2 bg-[#1e1e2e] border border-[#313244] rounded-md text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa] focus:border-transparent"
+                          rows="3"
+                        />
+                      ) : (
+                        <p className="text-[#cdd6f4] mt-2">{comment.content}</p>
+                      )}
                     </div>
                   ))}
                   {comments.length === 0 && (

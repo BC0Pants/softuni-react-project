@@ -66,5 +66,26 @@ export default {
     );
 
     return Comment.findByIdAndDelete(commentId);
+  },
+
+  async edit(commentId, content, token) {
+    const userId = extractIdFromToken(token);
+    if (!userId) {
+      throw new Error("User authentication failed");
+    }
+
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    if (comment.author.toString() !== userId) {
+      throw new Error("You can only edit your own comments");
+    }
+
+    comment.content = content;
+    await comment.save();
+
+    return Comment.findById(commentId).populate('author', 'username');
   }
 }; 
