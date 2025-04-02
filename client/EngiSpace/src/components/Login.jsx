@@ -1,59 +1,38 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login, error, isLoading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    setError('');
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const response = await axios.post('http://localhost:8080/auth/login', formData, {
-        withCredentials: true
-      });
-
-      if (response.status === 200) {
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('token', response.data.token);
-        navigate('/');
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during login. Please try again.');
-    } finally {
-      setIsLoading(false);
+    const success = await login(formData);
+    if (success) {
+      navigate('/');
     }
   };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-[#1e1e2e] pt-16">
-      <div className="w-full max-w-md p-8 bg-[#181825] rounded-lg shadow-lg">
-        <h2 className="text-3xl text-[#89b4fa] font-bold text-center mb-8">Login</h2>
-        {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-500 text-sm">
-            {error}
-          </div>
-        )}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-[#cdd6f4] text-sm font-medium mb-2">
+      <div className="bg-[#181825] p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-2xl text-[#89b4fa] font-bold mb-6">Login</h2>
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-[#a6adc8] mb-2">
               Email
             </label>
             <input
@@ -62,13 +41,12 @@ const Login = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              className="w-full p-2 rounded bg-[#313244] text-[#cdd6f4] border border-[#45475a] focus:outline-none focus:border-[#89b4fa]"
               required
-              className="w-full px-4 py-2 bg-[#1e1e2e] border border-[#313244] rounded-md text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa] focus:border-transparent"
-              placeholder="Enter your email"
             />
           </div>
-          <div>
-            <label htmlFor="password" className="block text-[#cdd6f4] text-sm font-medium mb-2">
+          <div className="mb-6">
+            <label htmlFor="password" className="block text-[#a6adc8] mb-2">
               Password
             </label>
             <input
@@ -77,25 +55,22 @@ const Login = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              className="w-full p-2 rounded bg-[#313244] text-[#cdd6f4] border border-[#45475a] focus:outline-none focus:border-[#89b4fa]"
               required
-              className="w-full px-4 py-2 bg-[#1e1e2e] border border-[#313244] rounded-md text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa] focus:border-transparent"
-              placeholder="Enter your password"
             />
           </div>
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-2 px-4 bg-[#89b4fa] text-[#1e1e2e] font-medium rounded-md hover:bg-[#b4befe] transition-colors duration-300 ${
-              isLoading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className="w-full py-2 bg-[#89b4fa] text-[#1e1e2e] rounded hover:bg-[#74c7ec] transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        <p className="mt-6 text-center text-[#a6adc8]">
+        <p className="mt-4 text-center text-[#a6adc8]">
           Don't have an account?{' '}
-          <Link to="/register" className="text-[#89b4fa] hover:text-[#b4befe] transition-colors duration-300">
-            Sign up
+          <Link to="/register" className="text-[#89b4fa] hover:text-[#74c7ec]">
+            Register here
           </Link>
         </p>
       </div>

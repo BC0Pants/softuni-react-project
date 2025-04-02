@@ -15,10 +15,8 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route 
-          path="/" 
-          element={isAuthenticated ? <Home /> : <Welcome />} 
-        />
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<Welcome />} />
         <Route 
           path="/login" 
           element={isAuthenticated ? <Navigate to="/" /> : <Login />} 
@@ -27,17 +25,14 @@ function App() {
           path="/register" 
           element={isAuthenticated ? <Navigate to="/" /> : <Register />} 
         />
-        <Route 
-          path="/category/:flagId" 
-          element={isAuthenticated ? <CategoryPosts /> : <Navigate to="/login" />} 
-        />
+        <Route path="/category/:flagId" element={<CategoryPosts />} />
         <Route 
           path="/category/:flagId/posts/create-post" 
           element={isAuthenticated ? <CreatePost /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/category/:flagId/posts/:postId" 
-          element={isAuthenticated ? <PostPage /> : <Navigate to="/login" />} 
+          element={<PostPage />} 
         />
       </Routes>
     </Router>
