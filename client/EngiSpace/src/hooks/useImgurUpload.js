@@ -18,7 +18,7 @@ export const useImgurUpload = () => {
     try {
       const response = await axios.post('https://api.imgur.com/3/image', formData, {
         headers: {
-          Authorization: `Client-ID CLIENT_ID`, // Replace with your actual Client ID
+          Authorization: `Client-ID ${CLIENT_ID}`, // Replace with your actual Client ID
         },
       });
 
