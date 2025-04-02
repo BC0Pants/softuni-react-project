@@ -4,8 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const { logout, isAuthenticated } = useAuth();
 
   const handleLogout = () => {
     logout();

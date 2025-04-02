@@ -8,9 +8,10 @@ import CategoryPosts from './components/CategoryPosts';
 import CreatePost from './components/CreatePost';
 import PostPage from './components/PostPage';
 import Profile from './components/Profile';
+import { useAuth } from './hooks/useAuth';
 
 function App() {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const { isAuthenticated } = useAuth();
 
   return (
     <Router>

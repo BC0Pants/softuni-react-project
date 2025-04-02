@@ -3,6 +3,48 @@ import { usePosts } from '../hooks/usePosts';
 import { useComments } from '../hooks/useComments';
 import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
+import PostCard from './PostCard';
+
+const CommentCard = ({ comment }) => {
+  if (!comment.post) {
+    return (
+      <div className="bg-[#181825] rounded-lg shadow-sm p-6">
+        <p className="text-[#a6adc8] mb-2 line-clamp-3">{comment.content}</p>
+        <div className="text-sm text-[#a6adc8]">
+          Commented on {new Date(comment.createdAt).toLocaleDateString()}
+        </div>
+        <div className="text-sm text-[#f38ba8] mt-2">
+          (Post no longer exists)
+        </div>
+      </div>
+    );
+  }
+
+  if (!comment.post.flags || comment.post.flags.length === 0) {
+    return (
+      <div className="bg-[#181825] rounded-lg shadow-sm p-6">
+        <p className="text-[#a6adc8] mb-2 line-clamp-3">{comment.content}</p>
+        <div className="text-sm text-[#a6adc8]">
+          Commented on {new Date(comment.createdAt).toLocaleDateString()}
+        </div>
+        <div className="text-sm text-[#f38ba8] mt-2">
+          (Category no longer exists)
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Link to={`/category/${comment.post.flags[0]._id}/posts/${comment.post._id}`} className="block">
+      <div className="bg-[#181825] rounded-lg shadow-sm p-6 hover:bg-[#313244] transition-colors duration-300">
+        <p className="text-[#a6adc8] mb-2 line-clamp-3">{comment.content}</p>
+        <div className="text-sm text-[#a6adc8]">
+          Commented on {new Date(comment.createdAt).toLocaleDateString()}
+        </div>
+      </div>
+    </Link>
+  );
+};
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('posts');
@@ -136,19 +178,11 @@ const Profile = () => {
                 ) : (
                   <div className="space-y-4">
                     {userPosts.map((post) => (
-                      <div key={post._id} className="bg-[#181825] rounded-lg shadow-sm hover:bg-[#313244] transition-colors duration-300">
+                      <div key={post._id}>
                         {post.flags && post.flags.length > 0 ? (
-                          <Link to={`/category/${post.flags[0]._id}/posts/${post._id}`} className="block p-6">
-                            <h2 className="text-xl font-semibold text-[#89b4fa] mb-2 hover:text-[#74c7ec] transition-colors duration-200">
-                              {post.title}
-                            </h2>
-                            <p className="text-[#a6adc8] mb-4 line-clamp-3">{post.body}</p>
-                            <div className="text-sm text-[#a6adc8]">
-                              Posted on {new Date(post.createdAt).toLocaleDateString()}
-                            </div>
-                          </Link>
+                          <PostCard post={post} flagId={post.flags[0]._id} />
                         ) : (
-                          <div className="p-6">
+                          <div className="bg-[#181825] rounded-lg shadow-sm p-6">
                             <h2 className="text-xl font-semibold text-[#89b4fa] mb-2">
                               {post.title}
                             </h2>
@@ -175,38 +209,7 @@ const Profile = () => {
                 ) : (
                   <div className="space-y-4">
                     {userComments.map((comment) => (
-                      <div key={comment._id} className="bg-[#181825] rounded-lg shadow-sm hover:bg-[#313244] transition-colors duration-300">
-                        {comment.post ? (
-                          comment.post.flags && comment.post.flags.length > 0 ? (
-                            <Link to={`/category/${comment.post.flags[0]._id}/posts/${comment.post._id}`} className="block p-6">
-                              <p className="text-[#a6adc8] mb-2 line-clamp-3">{comment.content}</p>
-                              <div className="text-sm text-[#a6adc8]">
-                                Commented on {new Date(comment.createdAt).toLocaleDateString()}
-                              </div>
-                            </Link>
-                          ) : (
-                            <div className="p-6">
-                              <p className="text-[#a6adc8] mb-2 line-clamp-3">{comment.content}</p>
-                              <div className="text-sm text-[#a6adc8]">
-                                Commented on {new Date(comment.createdAt).toLocaleDateString()}
-                              </div>
-                              <div className="text-sm text-[#f38ba8] mt-2">
-                                (Category no longer exists)
-                              </div>
-                            </div>
-                          )
-                        ) : (
-                          <div className="p-6">
-                            <p className="text-[#a6adc8] mb-2 line-clamp-3">{comment.content}</p>
-                            <div className="text-sm text-[#a6adc8]">
-                              Commented on {new Date(comment.createdAt).toLocaleDateString()}
-                            </div>
-                            <div className="text-sm text-[#f38ba8] mt-2">
-                              (Post no longer exists)
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                      <CommentCard key={comment._id} comment={comment} />
                     ))}
                   </div>
                 )}

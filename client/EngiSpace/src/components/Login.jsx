@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, error, isLoading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
@@ -21,7 +22,9 @@ const Login = () => {
     e.preventDefault();
     const success = await login(formData);
     if (success) {
-      navigate('/');
+      // Navigate to the intended destination if it exists, otherwise go to home
+      const from = location.state?.from || '/';
+      navigate(from);
     }
   };
 

@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 export const useAuth = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+    setIsAuthenticated(!!token && isAuth);
+  }, []);
 
   const login = async (formData) => {
     setIsLoading(true);
@@ -18,6 +25,7 @@ export const useAuth = () => {
         const token = response.data.token;
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('token', token);
+        setIsAuthenticated(true);
         
         // Decode the token to get the user ID
         try {
@@ -57,6 +65,7 @@ export const useAuth = () => {
           const token = loginResponse.data.token;
           localStorage.setItem('isAuthenticated', 'true');
           localStorage.setItem('token', token);
+          setIsAuthenticated(true);
           
           // Decode the token to get the user ID
           try {
@@ -81,6 +90,7 @@ export const useAuth = () => {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    setIsAuthenticated(false);
   };
 
   return {
@@ -88,6 +98,7 @@ export const useAuth = () => {
     register,
     logout,
     error,
-    isLoading
+    isLoading,
+    isAuthenticated
   };
 }; 
