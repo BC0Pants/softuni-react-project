@@ -155,11 +155,13 @@ const PostPage = () => {
             <div className="mt-6 flex items-center space-x-4">
               <button
                 onClick={handleLike}
-                className={`flex items-center space-x-2 ${
-                  isLiked ? 'text-[#f5c2e7]' : 'text-[#a6adc8]'
-                } hover:text-[#f5c2e7] transition-colors duration-300`}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md text-[#cdd6f4] ${
+                  isLiked 
+                    ? 'bg-[#89b4fa]' 
+                    : 'bg-[#313244] hover:bg-[#45475a]'
+                } transition-colors duration-300`}
               >
-                <span>❤️</span>
+                <span className="text-2xl">&#10084;</span>
                 <span>{post.likes?.length || 0}</span>
               </button>
             </div>
@@ -199,15 +201,15 @@ const PostPage = () => {
                           <>
                             <button
                               onClick={() => handleEditComment(comment._id)}
-                              className="text-[#89b4fa] hover:text-[#74c7ec]"
+                              className="text-[#89b4fa] hover:text-[#74c7ec] text-xl"
                             >
-                              Save
+                              &#10003;
                             </button>
                             <button
                               onClick={cancelEditing}
-                              className="text-[#a6adc8] hover:text-[#89b4fa]"
+                              className="text-[#a6adc8] hover:text-[#89b4fa] text-xl"
                             >
-                              Cancel
+                              &#10005;
                             </button>
                           </>
                         ) : (
@@ -216,13 +218,27 @@ const PostPage = () => {
                               onClick={() => startEditing(comment)}
                               className="text-[#89b4fa] hover:text-[#74c7ec]"
                             >
-                              Edit
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                              </svg>
                             </button>
                             <button
                               onClick={() => handleDeleteComment(comment._id)}
                               className="text-red-500 hover:text-red-400"
                             >
-                              Delete
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5"
+                                viewBox="0 0 448 512"
+                                fill="currentColor"
+                              >
+                                <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+                              </svg>
                             </button>
                           </>
                         )}
