@@ -1,6 +1,6 @@
-# EngiSpace - Engineering Project Management Platform
+# EngiSpace - Engineering Communication Platform
 
-EngiSpace is a modern web application designed to help engineering teams manage their projects efficiently. Built with React and Node.js, it provides a robust platform for project management and collaboration.
+EngiSpace is a dedicated platform designed to facilitate seamless communication and collaboration between engineers. Built with React and Node.js, it provides a specialized space where engineers can connect, share knowledge, and work together on projects with fellow professionals in the field.
 
 ## 🚀 Features
 
@@ -8,9 +8,11 @@ EngiSpace is a modern web application designed to help engineering teams manage 
 - Secure Node.js/Express backend
 - MongoDB database integration
 - User authentication and authorization
-- Project management capabilities
+- Real-time communication between engineers
+- Project collaboration tools
 - Image upload functionality via Imgur
 - Responsive design with Tailwind CSS
+- Professional networking capabilities
 
 ## 🛠️ Tech Stack
 
