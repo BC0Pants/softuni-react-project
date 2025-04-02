@@ -1,16 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+
+// Create a custom event for auth state changes
+const AUTH_STATE_CHANGE = 'authStateChange';
 
 export const useAuth = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
+  const checkAuth = useCallback(() => {
     const token = localStorage.getItem('token');
     const isAuth = localStorage.getItem('isAuthenticated') === 'true';
-    setIsAuthenticated(!!token && isAuth);
+    const newAuthState = !!token && isAuth;
+    setIsAuthenticated(newAuthState);
+    // Dispatch custom event
+    window.dispatchEvent(new CustomEvent(AUTH_STATE_CHANGE, { 
+      detail: { isAuthenticated: newAuthState } 
+    }));
   }, []);
+
+  useEffect(() => {
+    checkAuth();
+
+    // Listen for auth state changes
+    const handleAuthChange = (event) => {
+      setIsAuthenticated(event.detail.isAuthenticated);
+    };
+
+    window.addEventListener(AUTH_STATE_CHANGE, handleAuthChange);
+    return () => window.removeEventListener(AUTH_STATE_CHANGE, handleAuthChange);
+  }, [checkAuth]);
 
   const login = async (formData) => {
     setIsLoading(true);
@@ -25,7 +45,6 @@ export const useAuth = () => {
         const token = response.data.token;
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('token', token);
-        setIsAuthenticated(true);
         
         // Decode the token to get the user ID
         try {
@@ -35,6 +54,7 @@ export const useAuth = () => {
           console.error('Error decoding token:', err);
         }
         
+        checkAuth();
         return true;
       }
     } catch (err) {
@@ -65,7 +85,6 @@ export const useAuth = () => {
           const token = loginResponse.data.token;
           localStorage.setItem('isAuthenticated', 'true');
           localStorage.setItem('token', token);
-          setIsAuthenticated(true);
           
           // Decode the token to get the user ID
           try {
@@ -75,6 +94,7 @@ export const useAuth = () => {
             console.error('Error decoding token:', err);
           }
           
+          checkAuth();
           return true;
         }
       }
@@ -90,7 +110,7 @@ export const useAuth = () => {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
-    setIsAuthenticated(false);
+    checkAuth();
   };
 
   return {
