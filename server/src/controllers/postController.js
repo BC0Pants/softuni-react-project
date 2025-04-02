@@ -59,6 +59,21 @@ postController.get("/:id", async (req, res) => {
   }
 });
 
+postController.post("/:id/like", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const post = await postService.toggleLike(req.params.id, token);
+    res.status(200).json(post);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
 postController.post("/upload-image", async (req, res) => {
   try {
     const imageData = req.body.image;

@@ -42,10 +42,33 @@ export default {
   },
   
   async getById(id) {
-    return Post.findById(id).populate('author').populate('flags');
+    return Post.findById(id).populate('author').populate('flags').populate('comments');
   },
 
   async getByFlagId(flagId) {
     return Post.find({ flags: flagId }).populate('author').populate('flags').sort({ createdAt: -1 });
+  },
+
+  async toggleLike(postId, token) {
+    const userId = extractIdFromToken(token);
+    if (!userId) {
+      throw new Error("User authentication failed");
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      throw new Error("Post not found");
+    }
+
+    const hasLiked = post.likes.includes(userId);
+    
+    if (hasLiked) {
+      post.likes = post.likes.filter(id => id.toString() !== userId);
+    } else {
+      post.likes.push(userId);
+    }
+
+    await post.save();
+    return post;
   }
 };
