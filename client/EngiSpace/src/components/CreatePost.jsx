@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePosts } from '../hooks/usePosts';
 import { useImgurUpload } from '../hooks/useImgurUpload';
@@ -17,6 +17,13 @@ const CreatePost = () => {
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,6 +76,12 @@ const CreatePost = () => {
     e.preventDefault();
     setError('');
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
     if (!validateForm()) {
       return;
     }
@@ -87,18 +100,9 @@ const CreatePost = () => {
 
       if (success) {
         navigate(`/category/${formData.flagsId}`);
-      } else {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          navigate('/login');
-        }
       }
     } catch (err) {
       setError(err.message || 'An error occurred while creating the post. Please try again.');
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-      }
     }
   };
 
