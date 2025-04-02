@@ -97,7 +97,9 @@ export const usePosts = () => {
           headers: getAuthHeader()
         }
       );
-      setPost(response.data);
+      if (response.data) {
+        setPost(response.data);
+      }
       return true;
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to like post');
@@ -129,7 +131,9 @@ export const usePosts = () => {
           headers: getAuthHeader()
         }
       );
-      setPost(response.data);
+      if (response.data) {
+        setPost(response.data);
+      }
       return true;
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update post');

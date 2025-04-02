@@ -71,8 +71,8 @@ postController.post("/:id/like", async (req, res) => {
       return res.status(401).json({ message: 'Authentication required' });
     }
 
-    await postService.toggleLike(req.params.id, token);
-    res.status(200).json({ message: 'Like toggled successfully' });
+    const updatedPost = await postService.toggleLike(req.params.id, token);
+    res.status(200).json(updatedPost);
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error.message });
@@ -112,8 +112,8 @@ postController.put("/:id", async (req, res) => {
       return res.status(401).json({ message: 'Authentication required' });
     }
 
-    await postService.update(req.params.id, req.body, token);
-    res.status(200).json({ message: 'Post updated successfully' });
+    const updatedPost = await postService.update(req.params.id, req.body, token);
+    res.status(200).json(updatedPost);
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error.message });
