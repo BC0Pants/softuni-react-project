@@ -87,6 +87,8 @@ const CreatePost = () => {
 
       if (success) {
         navigate(`/category/${formData.flagsId}`);
+      } else if (error === 'Please log in to create a post') {
+        navigate('/login');
       }
     } catch (err) {
       setError(err.message || 'An error occurred while creating the post. Please try again.');

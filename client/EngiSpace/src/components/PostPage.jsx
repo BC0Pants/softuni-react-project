@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { usePosts } from '../hooks/usePosts';
 import { useComments } from '../hooks/useComments';
 
@@ -12,6 +12,7 @@ const PostPage = () => {
   const [editingComment, setEditingComment] = useState(null);
   const [editContent, setEditContent] = useState('');
   const [currentUserId, setCurrentUserId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getPostById(postId);
@@ -37,6 +38,12 @@ const PostPage = () => {
   }, []);
 
   const handleLike = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
     try {
       const success = await likePost(postId);
       if (success) {
@@ -49,6 +56,12 @@ const PostPage = () => {
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
     if (!commentContent.trim()) return;
 
     try {

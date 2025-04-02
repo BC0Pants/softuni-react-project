@@ -58,6 +58,13 @@ export const usePosts = () => {
     setIsLoading(true);
     setError('');
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Please log in to create a post');
+      setIsLoading(false);
+      return false;
+    }
+
     try {
       const response = await axios.post('http://localhost:8080/posts/create', postData, {
         headers: getAuthHeader(),
