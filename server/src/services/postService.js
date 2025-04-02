@@ -42,7 +42,16 @@ export default {
   },
   
   async getById(id) {
-    return Post.findById(id).populate('author').populate('flags').populate('comments');
+    return Post.findById(id)
+      .populate('author')
+      .populate('flags')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'username'
+        }
+      });
   },
 
   async getByFlagId(flagId) {
@@ -69,6 +78,17 @@ export default {
     }
 
     await post.save();
-    return post;
+    
+    // Return the post with all necessary fields populated
+    return Post.findById(postId)
+      .populate('author')
+      .populate('flags')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'username'
+        }
+      });
   }
 };

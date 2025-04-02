@@ -39,14 +39,10 @@ export default {
   },
 
   async getByPostId(postId) {
-    const post = await Post.findById(postId).populate({
-      path: 'comments',
-      populate: {
-        path: 'author',
-        select: 'username'
-      }
-    });
-    return post.comments.sort((a, b) => b.createdAt - a.createdAt);
+    const comments = await Comment.find({ _id: { $in: await Post.findById(postId).select('comments') } })
+      .populate('author', 'username')
+      .sort({ createdAt: -1 });
+    return comments;
   },
 
   async delete(commentId, token) {
