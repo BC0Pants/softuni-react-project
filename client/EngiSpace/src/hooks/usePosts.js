@@ -67,15 +67,21 @@ export const usePosts = () => {
 
     try {
       const response = await axios.post('http://localhost:8080/posts/create', postData, {
-        headers: getAuthHeader(),
-        withCredentials: true
+        headers: {
+          ...getAuthHeader(),
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.status === 201) {
         return true;
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create post');
+      if (err.response?.status === 401) {
+        setError('Please log in to create a post');
+      } else {
+        setError(err.response?.data?.message || 'Failed to create post');
+      }
       return false;
     } finally {
       setIsLoading(false);
