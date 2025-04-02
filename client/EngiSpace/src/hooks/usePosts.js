@@ -99,6 +99,38 @@ export const usePosts = () => {
     }
   };
 
+  const deletePost = async (postId) => {
+    try {
+      await axios.delete(
+        `http://localhost:8080/posts/${postId}`,
+        {
+          headers: getAuthHeader()
+        }
+      );
+      return true;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete post');
+      return false;
+    }
+  };
+
+  const updatePost = async (postId, postData) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/posts/${postId}`,
+        postData,
+        {
+          headers: getAuthHeader()
+        }
+      );
+      setPost(response.data);
+      return true;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update post');
+      return false;
+    }
+  };
+
   return {
     posts,
     post,
@@ -108,6 +140,8 @@ export const usePosts = () => {
     getPostsByFlag,
     getPostById,
     createPost,
-    likePost
+    likePost,
+    deletePost,
+    updatePost
   };
 }; 

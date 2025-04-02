@@ -85,4 +85,41 @@ postController.post("/upload-image", async (req, res) => {
   }
 });
 
+postController.delete("/:id", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const success = await postService.delete(req.params.id, token);
+    if (!success) {
+      return res.status(404).json({ message: 'Post not found or unauthorized' });
+    }
+    res.status(200).json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+postController.put("/:id", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const postData = req.body;
+    const updatedPost = await postService.update(req.params.id, postData, token);
+    if (!updatedPost) {
+      return res.status(404).json({ message: 'Post not found or unauthorized' });
+    }
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
 export default postController;

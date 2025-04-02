@@ -90,5 +90,61 @@ export default {
           select: 'username'
         }
       });
+  },
+
+  async delete(postId, token) {
+    const userId = extractIdFromToken(token);
+    if (!userId) {
+      throw new Error("User authentication failed");
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return false;
+    }
+
+    // Check if the user is the author of the post
+    if (post.author.toString() !== userId) {
+      throw new Error("Unauthorized to delete this post");
+    }
+
+    await Post.findByIdAndDelete(postId);
+    return true;
+  },
+
+  async update(postId, postData, token) {
+    const userId = extractIdFromToken(token);
+    if (!userId) {
+      throw new Error("User authentication failed");
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return false;
+    }
+
+    // Check if the user is the author of the post
+    if (post.author.toString() !== userId) {
+      throw new Error("Unauthorized to edit this post");
+    }
+
+    // Update only allowed fields
+    post.title = postData.title || post.title;
+    post.body = postData.body || post.body;
+    post.picture = postData.picture || post.picture;
+
+    await post.save();
+
+    // Return the updated post with all necessary fields populated
+    return Post.findById(postId)
+      .populate('author')
+      .populate('flags')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'username'
+        }
+      });
   }
 };
