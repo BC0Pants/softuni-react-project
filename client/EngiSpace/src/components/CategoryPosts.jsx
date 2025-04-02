@@ -64,7 +64,7 @@ const CategoryPosts = () => {
           {posts.map((post) => (
             <Link
               key={post._id}
-              to={`/post/${post._id}`}
+              to={`/category/${flagId}/posts/${post._id}`}
               className="block bg-[#181825] p-6 rounded-lg hover:bg-[#313244] transition-colors duration-300"
             >
               <h3 className="text-xl text-[#89b4fa] font-semibold mb-2">{post.title}</h3>
