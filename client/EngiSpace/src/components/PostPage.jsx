@@ -304,7 +304,7 @@ const PostPage = () => {
                     <div className="flex space-x-2">
                       <button
                         onClick={handleEdit}
-                        className="text-[#89b4fa] hover:text-[#74c7ec]"
+                        className="p-2 rounded text-[#89b4fa] hover:text-[#74c7ec] hover:bg-[#313244] transition-colors duration-300"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -317,7 +317,7 @@ const PostPage = () => {
                       </button>
                       <button
                         onClick={handleDelete}
-                        className="text-red-500 hover:text-red-400"
+                        className="p-2 rounded text-red-500 hover:text-red-400 hover:bg-[#313244] transition-colors duration-300"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -405,7 +405,7 @@ const PostPage = () => {
                           <>
                             <button
                               onClick={() => startEditing(comment)}
-                              className="text-[#89b4fa] hover:text-[#74c7ec]"
+                              className="p-2 rounded text-[#89b4fa] hover:text-[#74c7ec] hover:bg-[#313244] transition-colors duration-300"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -418,7 +418,7 @@ const PostPage = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteComment(comment._id)}
-                              className="text-red-500 hover:text-red-400"
+                              className="p-2 rounded text-red-500 hover:text-red-400 hover:bg-[#313244] transition-colors duration-300"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
