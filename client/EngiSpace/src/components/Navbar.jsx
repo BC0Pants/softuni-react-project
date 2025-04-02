@@ -26,12 +26,6 @@ const Navbar = () => {
             </Link>
             {isAuthenticated ? (
               <>
-                <Link
-                  to="/category/65f8f8f8f8f8f8f8f8f8f8f8/posts/create-post"
-                  className="text-[#89b4fa] hover:text-[#74c7ec] transition-colors duration-300"
-                >
-                  Create Post
-                </Link>
                 <button
                   onClick={handleLogout}
                   className="text-[#a6adc8] hover:text-[#89b4fa] transition-colors duration-300"
